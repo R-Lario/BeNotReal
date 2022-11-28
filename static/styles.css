@@ -1,0 +1,62 @@
+/* GENERAL */
+html
+{
+  width: 100%;
+}
+
+body
+{
+    background-color: #111111;
+}
+
+.no-decoration
+{
+  text-decoration: none;
+}
+
+.selected
+{
+  font-weight: bold;
+}
+
+/* GENERAL END */
+
+/* NAVBAR */
+.nav-item > img
+{
+    max-height: 30px;
+    text-align: center;
+}
+/* NAVBAR END */
+
+/* MAIN CONTAINER */
+
+#main-container
+{
+  max-width: 400px;
+}
+
+/* MAIN CONTAINER END */
+
+/* LOGIN */
+
+.transparant-input
+{
+  border: none;
+  background-color: transparent;
+
+}
+
+.transparant-input:focus
+{
+  outline: none;
+}
+
+/* LOGIN END */
+
+/* OWN POST */
+.blur {
+  filter: url("#sharpBlur");
+}
+
+/* OWN POST END */

@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  BeReal Feed
+{% endblock %}
+
+
+{% block main %}
+  {% if response[0] %}
+    {% set json = response[1] %}
+    {% if feed_type == "friends" %}
+    <!-- BEGIN FIRST POST -->
+    <!-- Classify users own post -->
+    <div class="row">
+      <div class="col-2 col-md-3"></div>
+      <div class="not-posted-yet bereal-post mx-auto d-block my-2 col-8 col-md-6">
+        <div class="mx-auto my-3 px-2 position-relative">
+          <div class="bereal-header w-100 my-2 ">
+          </div>
+          <div class="position-relative blur">
+            <img class="bereal-image rounded-2 m-2 w-25 position-absolute second-picture" src="/static/secondPicture.png">
+
+            <img class="bereal-image w-100 rounded-2 first-picture" src="/static/firstPicture.png">
+          </div>
+          <!--Code borrowed from https://codepen.io/johndjameson/pen/xVjgPy-->
+          <svg class='d-none'>
+            <filter id='sharpBlur'>
+              <feGaussianBlur stdDeviation='3'></feGaussianBlur>
+              <feColorMatrix type='matrix' values='1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 9 0'></feColorMatrix>
+              <feComposite in2='SourceGraphic' operator='in'></feComposite>
+            </filter>
+          </svg>
+
+          <div class="position-absolute translate-middle top-50 start-50 text-center w-100">
+            <a class="fw-bold text-light no-decoration">You haven't posted yet...</a>
+            <br>
+            <button class=" btn btn-light rounded-3 fw-semibold mt-2">Post Bereal.</button>
+          </div>
+          <div class="bereal-footer mx-2">
+          </div>
+          <!-- Modal REALMOJIS-->
+          <div class="modal fade" id="realmoji-userId" tabindex="-1" aria-hidden="true">
+          </div>
+          <!--             MODAL REALMOJI END -->
+          <!-- Modal COMMENTS-->
+          <div class="modal fade" id="comments-userId" tabindex="-1" aria-hidden="true"></div>
+          <!--             MODAL COMMENTS END -->
+        </div>
+      </div>
+      <div class="col-2 col-md-3"></div>
+    </div>
+
+    <!-- END FIRST POST -->
+    {% endif %}
+
+    {% for post in json %}
+      {% with %}
+        <!-- SET VARIABLES -->
+        {% set username, userId = post.userName, post.user.id %}
+        {% set firstPhotoUrl, secondPhotoUrl = post.photoURL, post.secondaryPhotoURL %}
+
+        <!-- CHECK IF PROFILE PICTURE IS THERE -->
+        {% if "profilePicture" in post.user %}
+          {% set profilePictureUrl = post.user.profilePicture.url %}
+        {% else %}
+          {% set profilePictureUrl = "/static/blank-profile-picture.png" %}
+        {% endif %}
+
+        <!-- INCLUDE POST LAYOUT -->
+        {% include "post-layout.html" %}
+
+      {% endwith %}
+    {% endfor %}
+    {% if feed_type != "friends" %}
+    <form method="get" class="text-center">
+      <button type="submit" class="btn btn-light w-50">Refresh</button>
+    </form>
+    {% endif %}
+
+  {% endif %}
+{% endblock %}

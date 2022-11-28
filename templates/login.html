@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+
+
+{% block main %}
+<div class="row mx-auto">
+    {% if not sms_sent %}
+    <form method="post">
+        <div class="row row-cols-1">
+            <div class="col">
+                <input class="text-light w-100 m-2 transparant-input" name="phone-number" placeholder="Your number (with country code)"
+                    autofocus autocomplete="off">
+            </div>
+            <div class="col">
+                <button class="btn btn-light w-100 m-2" type="submit">Continue</button>
+            </div>
+        </div>
+    </form>
+    {% else %}
+    <form method="post">
+        <div class="row row-cols-1">
+            <div class="col">
+                <input class="text-light w-100 m-2 transparant-input" name="sms-code" placeholder="Sms code" autofocus autocomplete="off">
+            </div>
+            <div class="col">
+                <input name="vonageRequestId" class="d-none" value="{{vonageRequestId}}">
+                <button class="btn btn-light w-100 m-2" type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+
+
+</div>
+{% endblock %}

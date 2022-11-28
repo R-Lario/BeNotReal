@@ -1,0 +1,153 @@
+<!-- Classify users own post -->
+{% if uid == userId %}
+    <div id="{{userId}}" class="bereal-post mx-auto d-block users-own-post">
+{% else %}
+    <div id="{{userId}}" class="bereal-post mx-auto d-block">
+{% endif %}
+  <!-- FOREACH POST -->
+  <div class="mx-auto my-3 px-2">
+    <div class="bereal-header w-100 my-2 ">
+      <div class="mx-2">
+        <img style="height:25px;" class="rounded-circle" src="{{ profilePictureUrl }}">
+        <a class="text-light no-decoration ms-1 header-username" data-bs-toggle="modal" data-bs-target="#friendRequest-{{ userId }}">{{ username }}</a>
+        {% if post.location %}
+          <a class="text-light no-decoration ms-1 fst-italic fw-light location">{{ get_location(post.location._latitude, post.location._longitude) }}</a>
+        {% endif %}
+      </div>
+
+    </div>
+    <div class="position-relative">
+      <img class="bereal-image rounded-2 m-2 w-25 position-absolute second-picture" src="{{ secondPhotoUrl }}">
+
+      <img class="position-absolute start-0 bottom-0" src="/static/realmoji-smiley.png" height="50px" width="50px"
+        data-bs-toggle="modal" data-bs-target="#realmoji-{{ userId }}">
+
+
+        <!-- THIS IMG IS FOR SENDING REALMOJIS AS REACTION -> NEEDS TO BE IMPLEMENTED STILL -->
+      <!-- <img class="position-absolute end-0 bottom-0" src="/static/realmoji-smiley-plus.png" height="50px" width="50px"
+        data-bs-toggle="modal" data-bs-target="#realmoji-react-{{ userId }}"> -->
+
+      <img class="bereal-image w-100 rounded-2 first-picture" src="{{ firstPhotoUrl }}">
+
+    </div>
+    {% if feed_type == "friends" %}
+    <div class="bereal-footer mx-2">
+      <a class="fst-italic no-decoration text-dark" data-bs-toggle="modal" data-bs-target="#comments-{{ userId }}">
+        {% if post.comment|length > 0 %}
+          See comments
+        {% else %}
+          Add comment
+        {% endif %}
+      </a>
+
+    </div>
+    {% endif %}
+    {% if feed_type == "discovery" %}
+    <!-- Modal FRIEND REQUEST-->
+    <div class="modal fade" id="friendRequest-{{ userId }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-light">Send friend request to {{ username }} </h1>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="text-center" method="post">
+              <input name="friend-request" class="d-none" value="{{ userId }}">
+              <button class="btn btn-light w-50">Send friend request</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--             MODAL FRIEND REQUEST REACT END -->
+    {% endif %}
+    <!-- Modal REALMOJIS-->
+    <div class="modal fade" id="realmoji-{{ userId }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-light">{{ username }}'s realmoji's </h1>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!--                     FOREACH REALMOJI-->
+            {% for realMoji in post.realMojis %}
+              <div class="w-100 mb-2">
+                <a class="no-decoration text-light">{{ realMoji.emoji }}</a>
+                <img class="rounded-circle" height="40px" width="40px"
+                  src="{{ realMoji.uri }}">
+                <a class="no-decoration text-light">{{ realMoji.userName }}</a>
+              </div>
+            {% endfor %}
+            <!--                     FOREACH REALMOJI END -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--             MODAL REALMOJI END -->
+    <!-- Modal REACTION REALMOJIS-->
+    <div class="modal fade" id="realmoji-react-{{ userId }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-light">{{ username }}'s realmoji's </h1>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- MAKE THIS IN HERE -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--             MODAL REACTION REALMOJI  END -->
+    {% if feed_type == "friends" %}
+    <!-- Modal COMMENTS-->
+    <div class="modal fade" id="comments-{{ userId }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-light">{{ username }}'s comments </h1>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!--                     FOREACH COMMENT -->
+            {% for comment in post.comment %}
+              <div class="w-100 mb-2">
+                {% if "profilePicture" in comment.user %}
+                  {% set profilePictureCommentUrl = comment.user.profilePicture.url %}
+                {% else %}
+                  {% set profilePictureCommentUrl = "/static/blank-profile-picture.png" %}
+                {% endif %}
+                <img class="rounded-circle" height="40px" width="40px"
+                  src="{{ profilePictureCommentUrl }}">
+                <a class="ms-2 no-decoration text-light">{{ comment.user.username }} - </a>
+                <a class="no-decoration text-light">{{ comment.text }}</a>
+              </div>
+            {% endfor %}
+            <!--                     FOREACH COMMENT END -->
+            <!--ADD COMMENT-->
+            <div class="w-100 mb-2">
+              <form method="post">
+                <div class="w-100 row">
+                  <input class="text-light transparant-input col" name="add-comment" placeholder="Comment" autofocus autocomplete="off">
+                  <input class="d-none" name="user-id" value="{{ userId }}">
+                  <button class="btn btn-light col-auto" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                      <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                    </svg>
+                  </button>
+                </div>
+
+              </form>
+            </div>
+            <!--ADD COMMENT END-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--             MODAL COMMENTS END -->
+    {% endif %}
+  </div>
+  <!-- FOREACH POST END -->
+</div>
